@@ -32,7 +32,7 @@ const db = mysql.createConnection({
      nivel Varchar(50) NOT NULL,
      horario VARCHAR(50) NOT NULL,
      telefone VARCHAR(15) NOT NULL,
-     ativo INT NOT NULL
+     ativo BOOLEAN DEFAULT TURE
      );
      `;
      db.query(criarTabelaSQL, (erroTabela) =>{
