@@ -32,7 +32,7 @@ const db = mysql.createConnection({
      nivel Varchar(50) NOT NULL,
      horario VARCHAR(50) NOT NULL,
      telefone VARCHAR(15) NOT NULL,
-     ativo BOOLEAN DEFAULT TURE
+     ativo BOOLEAN DEFAULT TRUE
      );
      `;
      db.query(criarTabelaSQL, (erroTabela) =>{
@@ -87,7 +87,7 @@ app.post("/alunos", (req,res) => {
             if (erro) {
                 return res.status(500).json(erro);
             }
-            if (resultado.lenght > 0) {
+            if (resultado.length > 0) {
                 return res.status(400).json({
                     erro: "Já existe este nome cadastrado no banco"
                 })
@@ -138,7 +138,7 @@ app.post("/alunos", (req,res) => {
             if (erro) {
                 return res.status(500).json(erro);
             }
-            if (resultado.lenght === 0) {
+            if (resultado.length=== 0) {
                 return res.status(404).json({
                     erro: 'Aluno não encontrado'
                 })
@@ -187,8 +187,6 @@ app.post("/alunos", (req,res) => {
     })
     }
 const PORT = process.env.PORT || 3000;
-    app.listen(3000, () => {
-        console.log("Servidor rodando em: ")
-        console.log(`porta ${PORT}`)
-    
-    })
+    app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
