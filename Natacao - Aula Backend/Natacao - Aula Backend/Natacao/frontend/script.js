@@ -93,7 +93,7 @@ async function carregarEstatisticas() {
         const niveis = {"Iniciante": 0, "Intermediário": 0, "Avançado": 0};
         alunos.forEach(aluno => {
             if(niveis[aluno.nivel] !== undefined)
-                niveis[alunos.nivel]++;
+                niveis[aluno.nivel]++;
         });
         painel.innerHTML = `
         <div class="card-stat">
