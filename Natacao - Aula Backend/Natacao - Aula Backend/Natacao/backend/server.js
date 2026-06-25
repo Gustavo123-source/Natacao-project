@@ -52,59 +52,54 @@ app.get("/", (req, res) => {
     })
 })
  
-app.post("/alunos", (req,res) => {
-    const {
-        nome, idade, nivel, horario, telefone
-    } = req.body
- 
+app.post("/alunos", (req, res) => {
+    const { nome, idade, nivel, horario, telefone } = req.body;
+
+    // 1. Validações de campos obrigatórios
     if (!nome || !idade || !nivel || !horario || !telefone) {
-        return res.status(400).json({
-            erro: "Preencha todos os campos."
-        })
+        return res.status(400).json({ erro: "Preencha todos os campos." });
     }
- 
-        if (idade < 5) {
-            return res.status(400).json({
-                erro: "Aluno abaixo da idade permitida."
-            })
+
+    if (idade < 5) {
+        return res.status(400).json({ erro: "Aluno abaixo da idade permitida." });
+    }
+
+    if (idade > 100) {
+        return res.status(400).json({ erro: "Aluno acima da idade permitida." });
+    }
+
+    if (nome.length < 3) {
+        return res.status(400).json({ erro: "Menos de 3 letras no nome não são permitidas." });
+    }
+
+    // 2. Verificação de duplicidade
+    const verificaSQL = "SELECT * FROM alunos WHERE nome = ?";
+    db.query(verificaSQL, [nome], (erroVerifica, resultado) => {
+        if (erroVerifica) {
+            console.error("Erro ao verificar aluno:", erroVerifica);
+            return res.status(500).json({ erro: "Erro interno no banco de dados ao verificar cadastro." });
         }
 
-        if (idade > 100) {
-            return res.status(400).json({
-                erro: "Aluno acima da idade permitida."
-            })
+        if (resultado.length > 0) {
+            return res.status(400).json({ erro: "Já existe este nome cadastrado no banco." });
         }
 
-                if (nome.length < 3) {
-            return res.status(400).json({
-                erro: "Menos de 3 letras no nome não são permitidas"
-            })
-        }
- 
-        const verificaSQL = "SELECT * FROM alunos WHERE nome = ?";
-        db.query(verificaSQL, [nome],
-        (erro, resultado) => {
-            if (erro) {
-                return res.status(500).json(erro);
+        // 3. Inserção no banco
+        const inserirSQL = 'INSERT INTO alunos (nome, idade, nivel, horario, telefone) VALUES (?, ?, ?, ?, ?)';
+        db.query(inserirSQL, [nome, idade, nivel, horario, telefone], (erroInserir, resultadoInserir) => {
+            if (erroInserir) {
+                console.error("Erro ao inserir aluno:", erroInserir);
+       
+                return res.status(500).json({ erro: "Erro ao salvar o aluno no banco de dados." });
             }
-            if (resultado.length > 0) {
-                return res.status(400).json({
-                    erro: "Já existe este nome cadastrado no banco"
-                })
-            }
-            const inserirSQL = 'insert into alunos (nome, idade, nivel, horario, telefone) values(?, ?, ?, ?, ?)'
-            db.query (inserirSQL, [nome, idade, nivel, horario, telefone], (erro,resultado) => {
-                if (erro) {
-                    return res.status(500).json(erro);
-                }
-                res.status(201).json({
-                    mensagem: "Aluno caastrado",
-                    id: resultado.insertId
-                })
-            })
-        })
-    })
- 
+
+            return res.status(201).json({
+                mensagem: "Aluno cadastrado com sucesso",
+                id: resultadoInserir.insertId
+            });
+        });
+    });
+});
     app.get("/alunos", (req,res) => {
         db.query(
             "SELECT * FROM alunos", (erro, resultado) => {
