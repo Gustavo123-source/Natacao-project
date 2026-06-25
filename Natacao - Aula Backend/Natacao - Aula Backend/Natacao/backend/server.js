@@ -25,7 +25,7 @@ const db = mysql.createConnection({
     }
      console.log("Conectado com sucesso");
      const criarTabelaSQL = `
-     CREATE TABLE IF NOT EXISTS alunos (
+     CREATE TABLE IF NOT EXISTS alunos1 (
      id INT AUTO_INCREMENT PRIMARY KEY,
      nome VARCHAR(100) NOT NULL,
      idade INT NOT NULL,
@@ -73,7 +73,7 @@ app.post("/alunos", (req, res) => {
     }
 
     // 2. Verificação de duplicidade
-    const verificaSQL = "SELECT * FROM alunos WHERE nome = ?";
+    const verificaSQL = "SELECT * FROM alunos1 WHERE nome = ?";
     db.query(verificaSQL, [nome], (erroVerifica, resultado) => {
         if (erroVerifica) {
             console.error("Erro ao verificar aluno:", erroVerifica);
@@ -85,7 +85,7 @@ app.post("/alunos", (req, res) => {
         }
 
         // 3. Inserção no banco
-        const inserirSQL = 'INSERT INTO alunos (nome, idade, nivel, horario, telefone) VALUES (?, ?, ?, ?, ?)';
+        const inserirSQL = 'INSERT INTO alunos1 (nome, idade, nivel, horario, telefone) VALUES (?, ?, ?, ?, ?)';
         db.query(inserirSQL, [nome, idade, nivel, horario, telefone], (erroInserir, resultadoInserir) => {
             if (erroInserir) {
                 console.error("Erro ao inserir aluno:", erroInserir);
@@ -102,7 +102,7 @@ app.post("/alunos", (req, res) => {
 });
     app.get("/alunos", (req,res) => {
         db.query(
-            "SELECT * FROM alunos", (erro, resultado) => {
+            "SELECT * FROM alunos1", (erro, resultado) => {
                 if(erro) {
                     return res.status(500).json(erro);
                 }
@@ -112,7 +112,7 @@ app.post("/alunos", (req, res) => {
 
     app.delete("/alunos/:id", (req, res) =>{
        const id = req.params.id;
-     db.query("DELETE FROM alunos where id = ?", [id], (erro, resultado) => {
+     db.query("DELETE FROM alunos1 where id = ?", [id], (erro, resultado) => {
         if(erro) {
  return res.status(500).json(erro);
         } if (resultado.affectedRows === 0) {
@@ -129,7 +129,7 @@ app.post("/alunos", (req, res) => {
     
     app.put("/alunos/:id", (req, res) => {
         const id = Number(req.params.id)
-        db.query("SELECT ativo FROM alunos WHERE id = ?", [id], (erro, resultado) => {
+        db.query("SELECT ativo FROM alunos1 WHERE id = ?", [id], (erro, resultado) => {
             if (erro) {
                 return res.status(500).json(erro);
             }
@@ -139,7 +139,7 @@ app.post("/alunos", (req, res) => {
                 })
             }
             const novoStatus = resultado[0].ativo ? 0 : 1;
-            db.query("UPDATE alunos SET ativo = ? WHERE id = ?", [novoStatus, id], (erro) => {
+            db.query("UPDATE alunos1 SET ativo = ? WHERE id = ?", [novoStatus, id], (erro) => {
                 if (erro){
                     return res.status(500).json(erro);
                 }
